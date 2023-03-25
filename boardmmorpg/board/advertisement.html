@@ -1,0 +1,78 @@
+{% extends 'account/base.html' %}
+
+
+{% block title %}
+<p>All News</p>
+
+{% endblock title %}
+
+{% block content %}
+    <h1>Все новости</h1>
+    <h3>{{ time_now|date:'M d Y' }}</h3>
+    <h6>Всего новостей - {{ Advertisement | length }}</h6>
+    <hr>
+    {% if Advertisement %}
+        <table class="col-lg-12 text-center">
+            <tr>
+                <tr>
+                <td>
+                    <b>Название</b>
+                </td>
+                <td>
+                    <b>Превью</b>
+                </td>
+                <td>
+                    <b>Категория</b>
+                </td>
+                <td>
+                    <b>Дата</b>
+                </td>
+            </tr>
+            </tr>
+        {% for new in Advertisement %}
+           <td style="text-align: left">
+                    {{ new.title }}
+                </td>
+
+            <td style="text-align: left">
+                    {{ new.text }}
+                </td>
+
+                <td style="text-align: center">
+                    {{ new.dateCreation }}
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <h2>Новостей нет!</h2>
+    {% endif %}
+
+
+{% if is_paginated %}
+
+
+<!-- Если доступна предыдущая страница, то даём ссылку на неё и самую первую страницу -->
+    {% if page_obj.has_previous %}
+        <a href="?page=1">1</a>
+<!--        <a href="?page={{ page_obj.previous_page_number }}"><<<</a>-->
+    {% endif %}
+
+    <!-- Показываем только текущую страницу и ближайшие к ней, чтобы список не тянулся и не захламлял страницу -->
+    {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+    {{ page_obj.number }}
+
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
+{% endif %}
+
+{% endblock content %}

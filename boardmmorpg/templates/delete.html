@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Delete
+{% endblock title %}
+{% if perms.board.delete_advertisement %}
+{% block content %}
+<h2>Вы действительно хотите удалить объявление?</h2>
+<h1>Название - {{ Advertisement.title }}</h1>
+<p>Текст - {{ Advertisement.text }}</p>
+<p>Автор - {{ Advertisement.author.authorUser }}</p>
+<p>Дата загрузки - {{ Advertisement.dateCreation }}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form }}
+     <button type="submit" class="btn btn-danger">Delete </button>
+    <a class="btn btn-outline-secondary" href="{% url 'AdvertisementList' %}">Cancel</a>
+
+
+<!--    <input type="submit" value="подтвердить">-->
+</form>
+{% endblock content %}
+{% endif %}

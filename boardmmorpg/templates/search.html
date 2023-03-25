@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<p>Все объявления</p>
+
+{% endblock title %}
+
+{% block content %}
+    <h1>Все новости</h1>
+    <h3>{{ time_now|date:'M d Y' }}</h3>
+
+    <hr>
+<form method="GET">
+    {{ filter.form.as_p }} <!-- Форму от фильтров за нас сделает django. А вот кнопку, увы придётся делать самому -->
+    <input type="submit" value="Найти">
+</form>
+    {% if filter.qs %}
+        <table class="col-lg-12 text-center">
+            <tr>
+                <tr>
+                <td>
+                    <b>Название</b>
+                </td>
+                <td>
+                    <b>Категория</b>
+                </td>
+                <td>
+                    <b>Дата</b>
+                </td>
+            </tr>
+            </tr>
+        {% for id in search %}
+            <tr>
+                <td style="text-align: left">
+
+                        <a href="{% url 'AdvertisementDetail' id.id %}">{{ id.title }}</a>
+                    {% if id.author.username in user.username %}
+
+                         <a href="{% url 'AdvertisementUpdateView' id.id %}"><u>Редактировать </u></a>
+
+                         <a href="{% url 'AdvertisementDeleteView' id.id %}"><u>Удалить </u></a> <!-- добавим ссылку на удаление -->
+
+                    {% endif %}
+
+                    <!-- При нажатии на имя товара в таблице нас теперь будет перекидывать на страницу с информацией  -->
+
+                </td>
+                <td style="text-align: left">
+                    {{ id.Category | truncatechars:50 }}
+                </td>
+
+                <td style="text-align: center">
+                    {{ id.dateCreation }}
+                </td>
+            </tr>
+            {% for item in id.comments.all %}
+            <tr>
+
+            <td>
+                    <b>Отзыв</b>
+                </td>
+                <td>
+                    <b>Автор</b>
+                </td>
+                <td>
+                    <b>Статус</b>
+                </td>
+            </tr>
+                <tr>
+<td style="text-align: center">
+            {{item.text}}
+            </td>
+    <td style="text-align: center">
+            {{item.commentUser}}
+            </td>
+            <td style="text-align: center">
+            {{item.commentStatus}}
+            </td>
+            <td style="text-align: center">
+
+ <a href="{% url 'CommentUpdateView' item.id %}"><u>Модерация </u></a>
+</td>
+                    </tr>
+
+{% endfor %}
+        {% endfor %}
+        </table>
+    {% else %}
+        <h2>Новостей нет!</h2>
+    {% endif %}
+
+
+{% if is_paginated %}
+
+
+<!-- Если доступна предыдущая страница, то даём ссылку на неё и самую первую страницу -->
+    {% if page_obj.has_previous %}
+        <a href="?page=1">1</a>
+<!--        <a href="?page={{ page_obj.previous_page_number }}"><<<</a>-->
+    {% endif %}
+
+    <!-- Показываем только текущую страницу и ближайшие к ней, чтобы список не тянулся и не захламлял страницу -->
+    {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+    {{ page_obj.number }}
+
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
+{% endif %}
+
+{% endblock content %}
